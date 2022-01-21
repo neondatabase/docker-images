@@ -1,4 +1,4 @@
-FROM rustlang/rust:nightly-slim
+FROM rustlang/rust:nightly-bullseye-slim
 
 # Change default shell for RUN from Dash to Bash
 SHELL ["/bin/bash", "-exo", "pipefail", "-c"]
@@ -32,8 +32,12 @@ RUN set -e \
 		libssl-dev \
 		libxml2-dev \
 		libxmlsec1-dev \
+		libxxhash-dev \
 		llvm \
 		make \
+		clang \
+		cmake \
+		libstdc++-10-dev \
 		tk-dev \
 		wget \
 		xz-utils \
@@ -59,3 +63,14 @@ RUN set -e \
 
 # This installs version poetry at the latest version. poetry is updated about twice a month.
 RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
+
+# mold: A Modern Linker
+ENV MOLD_VERSION v1.0.1
+RUN set -e \
+	&& git clone https://github.com/rui314/mold.git \
+	&& cd mold \
+	&& git checkout ${MOLD_VERSION} \
+	&& make -j$(nproc) CXX=clang++ \
+	&& make install \
+	&& cd .. \
+	&& rm -rf mold
