@@ -6,7 +6,7 @@ SHELL ["/bin/bash", "-exo", "pipefail", "-c"]
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN set -e \
-	&& rustup component add llvm-tools-preview
+	&& rustup component add llvm-tools-preview rustfmt
 
 ENV PYENV_ROOT=/root/.pyenv \
     PATH=/root/.pyenv/shims:/root/.pyenv/bin:/root/.poetry/bin:$PATH
@@ -33,6 +33,7 @@ RUN set -e \
 		libxml2-dev \
 		libxmlsec1-dev \
 		libxxhash-dev \
+		libseccomp-dev \
 		llvm \
 		make \
 		clang \
@@ -58,6 +59,7 @@ RUN set -e \
 
 RUN set -e \
 	&& python --version \
+	&& pip install --upgrade pip \
 	&& pip --version \
 	&& pip install pipenv wheel
 
