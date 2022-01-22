@@ -1,16 +1,12 @@
 ARG RUST_VERSION=1.58.0
 
-FROM rust:${RUST_VERSION}-slim-bullseye
-
-# Change default shell for RUN from Dash to Bash
-SHELL ["/bin/bash", "-exo", "pipefail", "-c"]
-
-ENV DEBIAN_FRONTEND=noninteractive
+FROM cimg/rust:${RUST_VERSION}
 
 # Sys deps
 RUN set -e \
-	&& apt-get update \
-	&& apt-get install -y \
+	&& sudo apt-get update \
+	&& sudo apt-get install -y \
+		autoconf \
 		automake \
 		bison \
 		build-essential \
@@ -50,17 +46,16 @@ RUN set -e \
 		wget \
 		xz-utils \
 		zlib1g-dev \
-	&& rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+	&& sudo rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Rust deps
 RUN set -e \
-	&& rustup component add llvm-tools-preview rustfmt clippy \
-	&& cargo install cargo-audit
+	&& rustup component add llvm-tools-preview rustfmt clippy
 
 # Python
 ENV PYTHON_VERSION 3.7.12
-ENV PYENV_ROOT=/root/.pyenv \
-    PATH=/root/.pyenv/shims:/root/.pyenv/bin:/root/.poetry/bin:$PATH
+ENV PYENV_ROOT=/home/circleci/.pyenv \
+    PATH=/home/circleci/.pyenv/shims:/home/circleci/.pyenv/bin:/home/circleci/.poetry/bin:$PATH
 RUN set -e \
 	&& curl -sSfL https://pyenv.run | bash \
 	&& pyenv install ${PYTHON_VERSION} \
@@ -80,6 +75,6 @@ RUN set -e \
 	&& cd mold \
 	&& git checkout ${MOLD_VERSION} \
 	&& make -j$(nproc) CXX=clang++ \
-	&& make install \
+	&& sudo make install \
 	&& cd .. \
 	&& rm -rf mold
