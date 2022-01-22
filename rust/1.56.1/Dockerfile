@@ -21,6 +21,8 @@ RUN set -e \
 		jq \
 		curl \
 		git \
+		flex \
+		bison \
 		libpq-dev \
 		libbz2-dev \
 		liblzma-dev \
