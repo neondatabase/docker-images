@@ -53,7 +53,7 @@ RUN set -e \
 	&& rustup component add llvm-tools-preview rustfmt clippy
 
 # Python
-ENV PYTHON_VERSION 3.7.12
+ENV PYTHON_VERSION 3.9.2
 ENV PYENV_ROOT=/home/circleci/.pyenv \
     PATH=/home/circleci/.pyenv/shims:/home/circleci/.pyenv/bin:/home/circleci/.poetry/bin:$PATH
 RUN set -e \
