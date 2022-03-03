@@ -1,11 +1,12 @@
-ARG RUST_VERSION=1.58.0
+ARG RUST_VERSION=1.56.1
+ARG IMAGE_NAME=rust
 
-FROM cimg/rust:${RUST_VERSION}
+FROM ${IMAGE_NAME}:${RUST_VERSION}-bullseye
 
 # Sys deps
 RUN set -e \
-	&& sudo apt-get update \
-	&& sudo apt-get install -y \
+	&& apt-get update \
+	&& apt-get install -y \
 		autoconf \
 		automake \
 		bison \
@@ -46,7 +47,7 @@ RUN set -e \
 		wget \
 		xz-utils \
 		zlib1g-dev \
-	&& sudo rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+	&& rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Rust deps
 RUN set -e \
@@ -75,6 +76,6 @@ RUN set -e \
 	&& cd mold \
 	&& git checkout ${MOLD_VERSION} \
 	&& make -j$(nproc) CXX=clang++ \
-	&& sudo make install \
+	&& make install \
 	&& cd .. \
 	&& rm -rf mold

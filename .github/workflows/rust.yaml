@@ -6,9 +6,19 @@ on:
       - 'main'
 
 jobs:
-
   build-images:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-20.04
+            rust_image_name: rust
+            suffix: ''
+          - os: amd64/ubuntu-20.04
+            rust_image_name: arm64v8/rust
+            suffix: -amd64
+
+    name: build-images (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
     steps:
       -
         name: Checkout
@@ -23,16 +33,22 @@ jobs:
         name: rust-1.56.1
         uses: docker/build-push-action@v2
         with:
-          context: rust/1.56.1
+          context: ./rust/
+          build-args: |
+            RUST_VERSION=1.56.1
+            IMAGE_NAME=${{ matrix.rust_image_name }}
           pull: true
           push: true
-          tags: zimg/rust:1.56.1,zimg/rust:1.56,zimg/rust:stable
+          tags: zimg/rust:1.56.1${{ matrix.suffix }},zimg/rust:1.56${{ matrix.suffix }},zimg/rust:stable${{ matrix.suffix }}
 
       -
         name: rust-1.58.0
         uses: docker/build-push-action@v2
         with:
-          context: rust/1.58.0
+          context: ./rust/
+          build-args: |
+            RUST_VERSION=1.58.0
+            IMAGE_NAME=${{ matrix.rust_image_name }}
           pull: true
           push: true
-          tags: zimg/rust:1.58.0,zimg/rust:1.58,zimg/rust:edge
+          tags: zimg/rust:1.58.0${{ matrix.suffix }},zimg/rust:1.58${{ matrix.suffix }},zimg/rust:edge${{ matrix.suffix }}
