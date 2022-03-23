@@ -79,3 +79,12 @@ RUN set -e \
 	&& sudo make install \
 	&& cd .. \
 	&& rm -rf mold
+
+# etcd
+ENV ETCD_VER=v3.5.2
+ENV DOWNLOAD_URL=https://storage.googleapis.com/etcd
+RUN set -e \
+    && curl -L ${DOWNLOAD_URL}/${ETCD_VER}/etcd-${ETCD_VER}-linux-amd64.tar.gz -o etcd-${ETCD_VER}-linux-amd64.tar.gz \
+    && tar xzvf etcd-${ETCD_VER}-linux-amd64.tar.gz \
+    && sudo mv etcd-${ETCD_VER}-linux-amd64/etcd etcd-${ETCD_VER}-linux-amd64/etcdctl /usr/local/bin/ \
+    && rm -rf etcd-${ETCD_VER}-linux-amd64.tar.gz etcd-${ETCD_VER}-linux-amd64
