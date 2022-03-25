@@ -52,6 +52,7 @@ RUN set -e \
 RUN set -e \
 	&& rustup component add llvm-tools-preview rustfmt clippy \
 	&& cargo install --git https://github.com/paritytech/cachepot
+ENV RUSTC_WRAPPER=cachepot
 
 # Python
 ENV PYTHON_VERSION 3.9.2
