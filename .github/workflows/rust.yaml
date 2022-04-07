@@ -29,10 +29,10 @@ jobs:
           tags: zimg/rust:1.56.1,zimg/rust:1.56,zimg/rust:stable
 
       -
-        name: rust-1.58.0
+        name: rust-1.58.1
         uses: docker/build-push-action@v2
         with:
-          context: rust/1.58.0
+          context: rust/1.58.1
           pull: true
           push: true
-          tags: zimg/rust:1.58.0,zimg/rust:1.58,zimg/rust:edge
+          tags: zimg/rust:1.58.1,zimg/rust:1.58,zimg/rust:edge

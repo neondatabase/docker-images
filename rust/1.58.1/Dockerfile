@@ -1,4 +1,4 @@
-ARG RUST_VERSION=1.58.0
+ARG RUST_VERSION=1.58.1
 
 FROM cimg/rust:${RUST_VERSION}
 
@@ -51,7 +51,8 @@ RUN set -e \
 # Rust deps
 RUN set -e \
 	&& rustup component add llvm-tools-preview rustfmt clippy \
-	&& cargo install --git https://github.com/paritytech/cachepot
+	&& cargo install --git https://github.com/paritytech/cachepot \
+	&& cargo install rustfilt
 
 # Python
 ENV PYTHON_VERSION 3.9.2
