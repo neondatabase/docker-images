@@ -10,29 +10,31 @@ jobs:
   build-images:
     runs-on: ubuntu-latest
     steps:
-      -
-        name: Checkout
+      - name: Checkout
         uses: actions/checkout@v2
-      -
-        name: Login to DockerHub
+
+      - name: Login to DockerHub
         uses: docker/login-action@v1
         with:
           username: ${{ secrets.ZIMG_DOCKERHUB_USERNAME }}
           password: ${{ secrets.ZIMG_DOCKERHUB_PASSWORD }}
-      -
-        name: rust-1.56.1
-        uses: docker/build-push-action@v2
-        with:
-          context: rust/1.56.1
-          pull: true
-          push: true
-          tags: zimg/rust:1.56.1,zimg/rust:1.56,zimg/rust:stable
 
-      -
-        name: rust-1.58.0
+      - name: rust-1.58
         uses: docker/build-push-action@v2
         with:
-          context: rust/1.58.0
+          context: ./rust/
+          build-args:
+            RUSTC_VERSION=1.58
           pull: true
           push: true
-          tags: zimg/rust:1.58.0,zimg/rust:1.58,zimg/rust:edge
+          tags: zimg/rust:1.58.1,zimg/rust:1.58,zimg/rust:stable
+
+      - name: rust-1.60
+        uses: docker/build-push-action@v2
+        with:
+          context: ./rust/
+          build-args:
+            RUSTC_VERSION=1.60
+          pull: true
+          push: true
+          tags: zimg/rust:1.60.0,zimg/rust:1.60,zimg/rust:edge
