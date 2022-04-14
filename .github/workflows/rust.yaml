@@ -23,8 +23,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: ./rust/
-          build-args:
-            RUSTC_VERSION=1.58
+          build-args: RUSTC_VERSION=1.58
           pull: true
           push: true
           tags: zimg/rust:1.58.1,zimg/rust:1.58,zimg/rust:stable
@@ -33,8 +32,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: ./rust/
-          build-args:
-            RUSTC_VERSION=1.60
+          build-args: RUSTC_VERSION=1.60
           pull: true
           push: true
           tags: zimg/rust:1.60.0,zimg/rust:1.60,zimg/rust:edge
