@@ -1,6 +1,6 @@
-ARG RUST_VERSION
+ARG RUSTC_VERSION
 
-FROM cimg/rust:${RUST_VERSION}
+FROM cimg/rust:${RUSTC_VERSION}
 
 # Sys deps
 RUN set -e \
@@ -51,7 +51,7 @@ RUN set -e \
 # Rust deps
 RUN set -e \
     && rustup component add llvm-tools-preview rustfmt clippy \
-    && cargo install --git https://github.com/paritytech/cachepot
+    && cargo install --git https://github.com/paritytech/cachepot \
     && cargo install rustfilt
 ENV RUSTC_WRAPPER=cachepot
 
