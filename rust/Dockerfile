@@ -1,17 +1,15 @@
 FROM summerwind/actions-runner:v2.291.1-ubuntu-20.04
 ARG RUSTC_VERSION
 
-ENV PATH="/home/runner/.cargo/bin:${PATH}"
+ENV PATH="${HOME}/.cargo/bin:${PATH}"
+
+WORKDIR ${HOME}
 
 RUN cd $HOME && \
-  curl -O https://static.rust-lang.org/rustup/dist/x86_64-unknown-linux-gnu/rustup-init && \
+  curl -O https://static.rust-lang.org/rustup/dist/$(uname -m)-unknown-linux-gnu/rustup-init && \
 	chmod +x rustup-init && \
 	./rustup-init -y --no-modify-path --default-toolchain ${RUSTC_VERSION} && \
 	rm rustup-init
-RUN	rustc --version && \
-	  cargo --version
-
-RUN rustup component add rustfmt
 
 # Sys deps
 RUN set -e \
@@ -84,7 +82,6 @@ RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-
 # mold: A Modern Linker
 ENV MOLD_VERSION v1.0.1
 RUN set -e \
-    && cd $HOME \
     && git clone https://github.com/rui314/mold.git \
     && cd mold \
     && git checkout ${MOLD_VERSION} \
@@ -97,7 +94,6 @@ RUN set -e \
 ENV ETCD_VER=v3.5.2
 ENV DOWNLOAD_URL=https://storage.googleapis.com/etcd
 RUN set -e \
-    && cd $HOME \
     && curl -L ${DOWNLOAD_URL}/${ETCD_VER}/etcd-${ETCD_VER}-linux-amd64.tar.gz -o etcd-${ETCD_VER}-linux-amd64.tar.gz \
     && tar xzvf etcd-${ETCD_VER}-linux-amd64.tar.gz \
     && sudo mv etcd-${ETCD_VER}-linux-amd64/etcd etcd-${ETCD_VER}-linux-amd64/etcdctl /usr/local/bin/ \
