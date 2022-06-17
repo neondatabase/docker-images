@@ -52,7 +52,7 @@ jobs:
       - name: rust-1.58
         uses: docker/build-push-action@v2
         with:
-          context: ./rust/
+          context: ./rust-actions-runner/
           build-args: RUST_VERSION=1.58
           pull: true
           push: true
@@ -61,7 +61,7 @@ jobs:
       - name: rust-1.60
         uses: docker/build-push-action@v2
         with:
-          context: ./rust/
+          context: ./rust-actions-runner/
           build-args: RUST_VERSION=1.60
           pull: true
           push: true
