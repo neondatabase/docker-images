@@ -21,3 +21,12 @@ jobs:
           pull: true
           push: false
           tags: test-build
+
+      - name: rust-actions-runner-1.58
+        uses: docker/build-push-action@v2
+        with:
+          context: ./rust-actions-runner/
+          build-args: RUSTC_VERSION=1.58
+          pull: true
+          push: false
+          tags: test-build

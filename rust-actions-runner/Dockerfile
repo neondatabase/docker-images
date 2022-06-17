@@ -1,8 +1,7 @@
 FROM summerwind/actions-runner:v2.291.1-ubuntu-20.04
-#ARG RUST_VERSION
+ARG RUST_VERSION
 
-ENV RUST_VERSION=1.58.0 \
-    PATH="/home/runner/.cargo/bin:${PATH}"
+ENV PATH="/home/runner/.cargo/bin:${PATH}"
 
 RUN cd $HOME && \
   curl -O https://static.rust-lang.org/rustup/dist/x86_64-unknown-linux-gnu/rustup-init && \
