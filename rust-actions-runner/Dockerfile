@@ -6,14 +6,10 @@ ENV PATH="/home/runner/.cargo/bin:${PATH}"
 RUN cd $HOME && \
   curl -O https://static.rust-lang.org/rustup/dist/x86_64-unknown-linux-gnu/rustup-init && \
 	chmod +x rustup-init && \
-	./rustup-init -y --no-modify-path --default-toolchain $RUST_VERSION && \
+	./rustup-init -y --no-modify-path --default-toolchain ${RUST_VERSION} && \
 	rm rustup-init
 RUN	rustc --version && \
 	  cargo --version
-
-RUN echo $HOME/.cargo/bin && sudo echo $HOME/.cargo/bin && echo $PATH && sudo echo $PATH
-#RUN sudo mv /root/.cargo /root/.rustup $HOME/
-#RUN sudo ls -la /root/
 
 RUN rustup component add rustfmt
 
