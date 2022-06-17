@@ -1,6 +1,17 @@
+FROM summerwind/actions-runner:v2.291.1-ubuntu-20.04
 ARG RUSTC_VERSION
 
-FROM cimg/rust:${RUSTC_VERSION}
+ENV PATH="/home/runner/.cargo/bin:${PATH}"
+
+RUN cd $HOME && \
+  curl -O https://static.rust-lang.org/rustup/dist/x86_64-unknown-linux-gnu/rustup-init && \
+	chmod +x rustup-init && \
+	./rustup-init -y --no-modify-path --default-toolchain ${RUSTC_VERSION} && \
+	rm rustup-init
+RUN	rustc --version && \
+	  cargo --version
+
+RUN rustup component add rustfmt
 
 # Sys deps
 RUN set -e \
@@ -56,8 +67,8 @@ ENV RUSTC_WRAPPER=cachepot
 
 # Python
 ENV PYTHON_VERSION 3.9.2
-ENV PYENV_ROOT=/home/circleci/.pyenv \
-    PATH=/home/circleci/.pyenv/shims:/home/circleci/.pyenv/bin:/home/circleci/.poetry/bin:$PATH
+ENV PYENV_ROOT=$HOME/.pyenv \
+    PATH=$HOME/.pyenv/shims:$HOME/.pyenv/bin:$HOME/.poetry/bin:$PATH
 RUN set -e \
     && curl -sSfL https://pyenv.run | bash \
     && pyenv install ${PYTHON_VERSION} \
@@ -73,6 +84,7 @@ RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-
 # mold: A Modern Linker
 ENV MOLD_VERSION v1.0.1
 RUN set -e \
+    && cd $HOME \
     && git clone https://github.com/rui314/mold.git \
     && cd mold \
     && git checkout ${MOLD_VERSION} \
@@ -85,7 +97,10 @@ RUN set -e \
 ENV ETCD_VER=v3.5.2
 ENV DOWNLOAD_URL=https://storage.googleapis.com/etcd
 RUN set -e \
+    && cd $HOME \
     && curl -L ${DOWNLOAD_URL}/${ETCD_VER}/etcd-${ETCD_VER}-linux-amd64.tar.gz -o etcd-${ETCD_VER}-linux-amd64.tar.gz \
     && tar xzvf etcd-${ETCD_VER}-linux-amd64.tar.gz \
     && sudo mv etcd-${ETCD_VER}-linux-amd64/etcd etcd-${ETCD_VER}-linux-amd64/etcdctl /usr/local/bin/ \
     && rm -rf etcd-${ETCD_VER}-linux-amd64.tar.gz etcd-${ETCD_VER}-linux-amd64
+
+RUN echo "PATH=${PATH}" | sudo tee /etc/environment
