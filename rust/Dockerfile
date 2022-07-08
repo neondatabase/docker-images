@@ -44,6 +44,7 @@ RUN set -e \
         libxmlsec1-dev \
         libxxhash-dev \
         llvm \
+        lsof \
         make \
         netcat \
         net-tools \
