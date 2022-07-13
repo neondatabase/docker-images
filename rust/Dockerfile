@@ -1,4 +1,4 @@
-FROM summerwind/actions-runner:v2.291.1-ubuntu-20.04
+FROM summerwind/actions-runner:v2.294.0-ubuntu-20.04
 ARG RUSTC_VERSION
 
 ENV PATH="${HOME}/.cargo/bin:${PATH}"
@@ -74,7 +74,7 @@ RUN set -e \
     && python --version \
     && pip install --upgrade pip \
     && pip --version \
-    && pip install pipenv wheel
+    && pip install pipenv wheel ansible boto3
 
 # This installs version poetry at the latest version. poetry is updated about twice a month.
 RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
@@ -98,5 +98,8 @@ RUN set -e \
     && tar xzvf etcd-${ETCD_VER}-linux-amd64.tar.gz \
     && sudo mv etcd-${ETCD_VER}-linux-amd64/etcd etcd-${ETCD_VER}-linux-amd64/etcdctl /usr/local/bin/ \
     && rm -rf etcd-${ETCD_VER}-linux-amd64.tar.gz etcd-${ETCD_VER}-linux-amd64
+
+# Helm
+RUN curl -s https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
 
 RUN echo "PATH=${PATH}" | sudo tee /etc/environment
