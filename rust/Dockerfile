@@ -52,6 +52,7 @@ RUN set -e \
         parallel \
         pkg-config \
         postgresql-client \
+        protobuf-compiler \
         wget \
         xz-utils \
         zlib1g-dev \
