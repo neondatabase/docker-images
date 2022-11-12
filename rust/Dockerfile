@@ -78,7 +78,7 @@ RUN set -e \
     && pip install pipenv wheel
 
 # This installs version poetry at the latest version. poetry is updated about twice a month.
-RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
+RUN curl -sSL https://install.python-poetry.org | python3 -
 
 # mold: A Modern Linker
 ENV MOLD_VERSION v1.0.1
