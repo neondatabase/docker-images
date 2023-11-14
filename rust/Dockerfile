@@ -1,60 +1,64 @@
-FROM summerwind/actions-runner:v2.291.1-ubuntu-20.04
+FROM bitnami/etcd:3.5.9 as etcd
+
+FROM summerwind/actions-runner:v2.304.0-ubuntu-22.04-34fdbf1
 ARG RUSTC_VERSION
 
+# To speed up cargo index update
+ENV CARGO_NET_GIT_FETCH_WITH_CLI=true
 ENV PATH="${HOME}/.cargo/bin:${PATH}"
 
 WORKDIR ${HOME}
 
 RUN cd $HOME && \
-  curl -O https://static.rust-lang.org/rustup/dist/$(uname -m)-unknown-linux-gnu/rustup-init && \
-	chmod +x rustup-init && \
-	./rustup-init -y --no-modify-path --default-toolchain ${RUSTC_VERSION} && \
-	rm rustup-init
+    curl -O https://static.rust-lang.org/rustup/dist/$(uname -m)-unknown-linux-gnu/rustup-init && \
+    chmod +x rustup-init && \
+    ./rustup-init -y --no-modify-path --default-toolchain ${RUSTC_VERSION} && \
+    rm rustup-init
 
 # Sys deps
 RUN set -e \
     && sudo apt-get update \
     && sudo apt-get install -y \
-        autoconf \
-        automake \
-        bison \
-        build-essential \
-        ca-certificates \
-        clang \
-        cmake \
-        curl \
-        flex \
-        git \
-        gnupg \
-        gzip \
-        jq \
-        libbz2-dev \
-        libffi-dev \
-        liblzma-dev \
-        libncurses5-dev \
-        libncursesw5-dev \
-        libpq-dev \
-        libreadline-dev \
-        libseccomp-dev \
-        libsqlite3-dev \
-        libssl-dev \
-        libstdc++-10-dev \
-        libtool \
-        libxml2-dev \
-        libxmlsec1-dev \
-        libxxhash-dev \
-        llvm \
-        lsof \
-        make \
-        netcat \
-        net-tools \
-        openssh-client \
-        parallel \
-        pkg-config \
-        postgresql-client \
-        wget \
-        xz-utils \
-        zlib1g-dev \
+    autoconf \
+    automake \
+    bison \
+    build-essential \
+    ca-certificates \
+    clang \
+    cmake \
+    curl \
+    flex \
+    git \
+    gnupg \
+    gzip \
+    jq \
+    libbz2-dev \
+    libffi-dev \
+    liblzma-dev \
+    libncurses5-dev \
+    libncursesw5-dev \
+    libpq-dev \
+    libreadline-dev \
+    libseccomp-dev \
+    libsqlite3-dev \
+    libssl-dev \
+    libstdc++-10-dev \
+    libtool \
+    libxml2-dev \
+    libxmlsec1-dev \
+    libxxhash-dev \
+    llvm \
+    lsof \
+    make \
+    netcat \
+    net-tools \
+    openssh-client \
+    parallel \
+    pkg-config \
+    postgresql-client \
+    wget \
+    xz-utils \
+    zlib1g-dev \
     && sudo rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Rust deps
@@ -77,26 +81,24 @@ RUN set -e \
     && pip install pipenv wheel
 
 # This installs version poetry at the latest version. poetry is updated about twice a month.
-RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
+RUN curl -sSL https://install.python-poetry.org | python3 -
 
 # mold: A Modern Linker
-ENV MOLD_VERSION v1.0.1
+ENV MOLD_VERSION v1.11.0
 RUN set -e \
-    && git clone https://github.com/rui314/mold.git \
-    && cd mold \
-    && git checkout ${MOLD_VERSION} \
-    && make -j$(nproc) CXX=clang++ \
-    && sudo make install \
-    && cd .. \
+    && git clone https://github.com/rui314/mold.git -b ${MOLD_VERSION} \
+    && mkdir mold/build \
+    && cd mold/build \
+    && sudo ../install-build-deps.sh \
+    && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=c++ .. \
+    && cmake --build . -j $(nproc) \
+    && sudo cmake --install . \
+    && cd ../.. \
     && rm -rf mold
 
 # etcd
-ENV ETCD_VER=v3.5.2
-ENV DOWNLOAD_URL=https://storage.googleapis.com/etcd
-RUN set -e \
-    && curl -L ${DOWNLOAD_URL}/${ETCD_VER}/etcd-${ETCD_VER}-linux-amd64.tar.gz -o etcd-${ETCD_VER}-linux-amd64.tar.gz \
-    && tar xzvf etcd-${ETCD_VER}-linux-amd64.tar.gz \
-    && sudo mv etcd-${ETCD_VER}-linux-amd64/etcd etcd-${ETCD_VER}-linux-amd64/etcdctl /usr/local/bin/ \
-    && rm -rf etcd-${ETCD_VER}-linux-amd64.tar.gz etcd-${ETCD_VER}-linux-amd64
+COPY --from=etcd /opt/bitnami/etcd/bin/etcd /usr/local/bin/etcd
+COPY --from=etcd /opt/bitnami/etcd/bin/etcdctl /usr/local/bin/etcdctl
 
+RUN etcd --version
 RUN echo "PATH=${PATH}" | sudo tee /etc/environment
